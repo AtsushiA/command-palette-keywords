@@ -13,7 +13,6 @@
     }
 
     const { subscribe, select, dispatch } = wp.data;
-    const { addFilter } = wp.hooks;
 
     // Get keyword mappings from PHP
     const keywordMappings = window.commandPaletteKeywords?.mappings || {};
@@ -78,12 +77,12 @@
         const contextualCommands = commandsStore.getCommands(true);
         const allCommands = [...commands, ...contextualCommands];
 
+        console.log('Command Palette Keywords: Processing', allCommands.length, 'commands');
+
         // Enhance each command with keywords
         allCommands.forEach(command => {
-            // Skip if already has keywords
-            if (command.keywords && command.keywords.length > 0) {
-                return;
-            }
+            let matchedKeywords = [];
+            let matchSource = '';
 
             // Try to extract URL from command name or callback
             let url = '';
@@ -93,38 +92,57 @@
                 // For commands like 'index.php', 'edit.php', etc.
                 if (command.name.includes('.php')) {
                     url = command.name;
+                    matchSource = 'name-direct';
                 }
-            }
-
-            // If we couldn't find URL from name, try to infer from label
-            if (!url && command.label) {
-                // Check if label contains hints
-                const label = command.label.toLowerCase();
-
-                // Try to match based on label content
-                for (const [slug, keywords] of Object.entries(keywordMappings)) {
-                    const keywordStr = keywords.join(' ').toLowerCase();
-                    if (keywords.some(kw => label.includes(kw.toLowerCase()))) {
-                        // Re-register command with keywords
-                        dispatch('core/commands').registerCommand({
-                            ...command,
-                            keywords: keywords
-                        });
-                        return;
+                // Also try to extract from core/edit-site pattern
+                else if (command.name.startsWith('core/')) {
+                    const slug = command.name.replace('core/', '');
+                    // Try to find a match in mappings
+                    for (const [key, keywords] of Object.entries(keywordMappings)) {
+                        if (key.includes(slug) || slug.includes(key.replace('.php', ''))) {
+                            matchedKeywords = keywords;
+                            matchSource = 'name-pattern';
+                            break;
+                        }
                     }
                 }
             }
 
             // Find keywords based on URL
-            if (url) {
-                const keywords = findKeywordsForUrl(url);
-                if (keywords.length > 0) {
-                    // Re-register command with keywords
-                    dispatch('core/commands').registerCommand({
-                        ...command,
-                        keywords: keywords
-                    });
+            if (url && matchedKeywords.length === 0) {
+                matchedKeywords = findKeywordsForUrl(url);
+                if (matchedKeywords.length > 0) {
+                    matchSource = 'url-match';
                 }
+            }
+
+            // If we couldn't find URL from name, try to infer from label
+            if (matchedKeywords.length === 0 && command.label) {
+                // Check if label contains hints
+                const label = command.label.toLowerCase();
+
+                // Try to match based on label content
+                for (const keywords of Object.values(keywordMappings)) {
+                    if (keywords.some(kw => label.includes(kw.toLowerCase()))) {
+                        matchedKeywords = keywords;
+                        matchSource = 'label-match';
+                        break;
+                    }
+                }
+            }
+
+            // Add keywords if found (merge with existing keywords)
+            if (matchedKeywords.length > 0) {
+                const existingKeywords = command.keywords || [];
+                const mergedKeywords = [...new Set([...existingKeywords, ...matchedKeywords])];
+
+                console.log(`Adding keywords to "${command.label}" (${command.name}):`, matchedKeywords, `[${matchSource}]`);
+
+                // Re-register command with enhanced keywords
+                dispatch('core/commands').registerCommand({
+                    ...command,
+                    keywords: mergedKeywords
+                });
             }
         });
     }

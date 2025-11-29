@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Command Palette Keywords
  * Description: Adds keyword search support to WordPress Command Palette
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: NExT-Season (created by Claude Code)
  * Author URI: https://next-season.net/
  * License: GPL2+
@@ -25,7 +25,7 @@ function cpk_enqueue_command_keywords() {
         'command-palette-keywords',
         plugins_url( 'assets/command-keywords.js', __FILE__ ),
         array( 'wp-commands', 'wp-core-commands', 'wp-data', 'wp-hooks' ),
-        '1.0.0',
+        '1.0.1',
         true
     );
 
