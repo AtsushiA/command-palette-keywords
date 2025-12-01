@@ -3,6 +3,7 @@
  * Plugin Name: Command Palette Keywords
  * Description: Adds keyword search support to WordPress Command Palette
  * Version: 1.0.1
+ * Requires at least: 6.9
  * Author: NExT-Season (created by Claude Code)
  * Author URI: https://next-season.net/
  * License: GPL2+
