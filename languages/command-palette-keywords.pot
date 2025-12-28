@@ -1,0 +1,30 @@
+# Copyright (C) 2025 NExT-Season (created by Claude Code)
+# This file is distributed under the GPL2+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Command Palette Keywords 1.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/command-palette-keywords\n"
+"POT-Creation-Date: 2025-12-28 00:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+
+#. Plugin Name of the plugin/theme
+msgid "Command Palette Keywords"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Adds keyword search support to WordPress Command Palette"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "NExT-Season (created by Claude Code)"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://next-season.net/"
+msgstr ""

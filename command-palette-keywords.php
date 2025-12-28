@@ -7,11 +7,25 @@
  * Author: NExT-Season (created by Claude Code)
  * Author URI: https://next-season.net/
  * License: GPL2+
+ * Text Domain: command-palette-keywords
+ * Domain Path: /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
+/**
+ * Load plugin textdomain for translations
+ */
+function cpk_load_textdomain() {
+    load_plugin_textdomain(
+        'command-palette-keywords',
+        false,
+        dirname( plugin_basename( __FILE__ ) ) . '/languages'
+    );
+}
+add_action( 'plugins_loaded', 'cpk_load_textdomain' );
 
 /**
  * Enqueue custom JavaScript to add keywords to command palette commands

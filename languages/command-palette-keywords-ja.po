@@ -1,0 +1,32 @@
+# Japanese translation for Command Palette Keywords
+# Copyright (C) 2025 NExT-Season (created by Claude Code)
+# This file is distributed under the GPL2+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Command Palette Keywords 1.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/command-palette-keywords\n"
+"POT-Creation-Date: 2025-12-28 00:00:00+00:00\n"
+"PO-Revision-Date: 2025-12-28 00:00:00+00:00\n"
+"Last-Translator: NExT-Season\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. Plugin Name of the plugin/theme
+msgid "Command Palette Keywords"
+msgstr "コマンドパレットキーワード"
+
+#. Description of the plugin/theme
+msgid "Adds keyword search support to WordPress Command Palette"
+msgstr "WordPressコマンドパレットにキーワード検索サポートを追加します"
+
+#. Author of the plugin/theme
+msgid "NExT-Season (created by Claude Code)"
+msgstr "NExT-Season (created by Claude Code)"
+
+#. Author URI of the plugin/theme
+msgid "https://next-season.net/"
+msgstr "https://next-season.net/"
