@@ -24,8 +24,7 @@ def parse_po_file(po_file):
             # Skip comments and empty lines
             if line.startswith('#') or not line:
                 if current_msgid is not None and current_msgstr is not None:
-                    if current_msgid:  # Skip empty msgid (header)
-                        translations[current_msgid] = current_msgstr
+                    translations[current_msgid] = current_msgstr  # Include header (empty msgid)
                     current_msgid = None
                     current_msgstr = None
                     in_msgid = False
@@ -35,20 +34,19 @@ def parse_po_file(po_file):
             # Start of msgid
             if line.startswith('msgid '):
                 if current_msgid is not None and current_msgstr is not None:
-                    if current_msgid:
-                        translations[current_msgid] = current_msgstr
-                current_msgid = line[6:].strip('"')
+                    translations[current_msgid] = current_msgstr
+                current_msgid = line[6:].strip('"').replace('\\n', '\n').replace('\\t', '\t').replace('\\"', '"').replace('\\\\', '\\')
                 current_msgstr = None
                 in_msgid = True
                 in_msgstr = False
             # Start of msgstr
             elif line.startswith('msgstr '):
-                current_msgstr = line[7:].strip('"')
+                current_msgstr = line[7:].strip('"').replace('\\n', '\n').replace('\\t', '\t').replace('\\"', '"').replace('\\\\', '\\')
                 in_msgid = False
                 in_msgstr = True
             # Continuation line
             elif line.startswith('"'):
-                content = line.strip('"')
+                content = line.strip('"').replace('\\n', '\n').replace('\\t', '\t').replace('\\"', '"').replace('\\\\', '\\')
                 if in_msgid:
                     current_msgid += content
                 elif in_msgstr:
@@ -56,8 +54,7 @@ def parse_po_file(po_file):
 
         # Add last entry
         if current_msgid is not None and current_msgstr is not None:
-            if current_msgid:
-                translations[current_msgid] = current_msgstr
+            translations[current_msgid] = current_msgstr
 
     return translations
 
@@ -71,10 +68,12 @@ def generate_mo_file(translations, mo_file):
     strs = b''
 
     for key in keys:
-        # Add msgid
-        offsets.append((len(ids), len(key), len(strs), len(translations[key])))
-        ids += key.encode('utf-8') + b'\x00'
-        strs += translations[key].encode('utf-8') + b'\x00'
+        # Encode to bytes first to get correct byte lengths
+        key_bytes = key.encode('utf-8')
+        val_bytes = translations[key].encode('utf-8')
+        offsets.append((len(ids), len(key_bytes), len(strs), len(val_bytes)))
+        ids += key_bytes + b'\x00'
+        strs += val_bytes + b'\x00'
 
     # Generate .mo file header
     keystart = 7 * 4 + 16 * len(keys)
