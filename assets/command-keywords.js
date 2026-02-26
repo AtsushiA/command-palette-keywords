@@ -77,7 +77,12 @@
         const contextualCommands = commandsStore.getCommands(true);
         const allCommands = [...commands, ...contextualCommands];
 
-        console.log('Command Palette Keywords: Processing', allCommands.length, 'commands');
+        // Debug mode - set to true to enable console logs
+        const DEBUG = false;
+
+        if (DEBUG) {
+            console.log('Command Palette Keywords: Processing', allCommands.length, 'commands');
+        }
 
         // Enhance each command with keywords
         allCommands.forEach(command => {
@@ -136,7 +141,9 @@
                 const existingKeywords = command.keywords || [];
                 const mergedKeywords = [...new Set([...existingKeywords, ...matchedKeywords])];
 
-                console.log(`Adding keywords to "${command.label}" (${command.name}):`, matchedKeywords, `[${matchSource}]`);
+                if (DEBUG) {
+                    console.log(`Adding keywords to "${command.label}" (${command.name}):`, matchedKeywords, `[${matchSource}]`);
+                }
 
                 // Re-register command with enhanced keywords
                 dispatch('core/commands').registerCommand({
@@ -152,6 +159,7 @@
      */
     let hasInitialized = false;
     let enhancementTimeout = null;
+    let lastEnhancedCount = 0;
 
     function initKeywordEnhancement() {
         if (hasInitialized) return;
@@ -164,6 +172,16 @@
                 return;
             }
 
+            // Get current command count to avoid duplicate processing
+            const commands = commandsStore.getCommands();
+            const contextualCommands = commandsStore.getCommands(true);
+            const currentCount = commands.length + contextualCommands.length;
+
+            // Only process if command count has changed
+            if (currentCount === lastEnhancedCount) {
+                return;
+            }
+
             // Store is ready, we can enhance commands
             // Use timeout to debounce multiple rapid calls
             if (enhancementTimeout) {
@@ -172,6 +190,7 @@
 
             enhancementTimeout = setTimeout(() => {
                 enhanceCommandsWithKeywords();
+                lastEnhancedCount = currentCount;
             }, 100);
         });
 
@@ -179,7 +198,15 @@
 
         // Also try to enhance immediately if store is already available
         if (select('core/commands')) {
-            setTimeout(enhanceCommandsWithKeywords, 500);
+            setTimeout(() => {
+                enhanceCommandsWithKeywords();
+                const commandsStore = select('core/commands');
+                if (commandsStore) {
+                    const commands = commandsStore.getCommands();
+                    const contextualCommands = commandsStore.getCommands(true);
+                    lastEnhancedCount = commands.length + contextualCommands.length;
+                }
+            }, 500);
         }
     }
 
@@ -189,10 +216,5 @@
     } else {
         initKeywordEnhancement();
     }
-
-    // Also try after a delay to catch late-loaded commands
-    setTimeout(() => {
-        enhanceCommandsWithKeywords();
-    }, 2000);
 
 })();
