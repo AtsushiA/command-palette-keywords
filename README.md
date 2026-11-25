@@ -1,5 +1,7 @@
 # NExT Command Palette Keywords
 
+[![Try in WordPress Playground](https://img.shields.io/badge/Try%20in-WordPress%20Playground-3858e9?logo=wordpress)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/AtsushiA/command-palette-keywords/main/blueprint.json)
+
 WordPress のコマンドパレットにキーワード検索機能を追加するプラグインです。
 
 ## 機能
